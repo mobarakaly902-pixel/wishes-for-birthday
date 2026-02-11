@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+}
+
+body{
+    min-height:100vh;
+    background:#000;
+    overflow-x:hidden;
+}
+
+/* VIDEO BG */
+#video-bg{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-2;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:-1;
+}
+
+/* GLASS CONTAINER */
+.container{
+    width:94%;
+    max-width:450px;
+    margin:20px auto;
+    padding:26px;
+    border-radius:28px;
+    background:linear-gradient(
+        120deg,
+        rgba(255,255,255,.38),
+        rgba(255,255,255,.15),
+        rgba(255,255,255,.30)
+    );
+    backdrop-filter: blur(22px);
+    box-shadow:0 30px 60px rgba(0,0,0,.45);
+}
+
+.layer{display:none}
+.layer.active{display:block}
+
+h1{
+    text-align:center;
+    color:#ff5a7a;
+    margin-bottom:15px;
+}
+
+p{
+    text-align:center;
+    color:#222;
+    line-height:1.6;
+}
+
+.main-img,#slideshow,.gallery-grid img{
+    width:100%;
+    border-radius:20px;
+    margin:15px 0;
+    transition:.35s;
+    cursor:pointer;
+}
+
+.main-img:hover,
+#slideshow:hover,
+.gallery-grid img:hover{
+    transform:scale(1.08) translateY(-6px);
+    box-shadow:0 20px 45px rgba(0,0,0,.45);
+}
+
+button{
+    padding:13px 24px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(135deg,#ff5a7a,#ff94a6);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    margin:6px;
+    box-shadow:0 8px 20px rgba(255,90,122,.45);
+    transition:.35s;
+}
+
+button:hover{
+    background:linear-gradient(135deg,#ff2a2a,#b80000);
+    box-shadow:0 10px 28px rgba(255,0,0,.6);
+    transform:translateY(-2px);
+}
+
+button:active{
+    transform:scale(.95);
+    background:linear-gradient(135deg,#b80000,#ff2a2a);
+}
+
+/* 🎂 EXTEND NEXT BUTTON – longer border, only next remains in layer2 */
+#layer2 button:last-of-type {
+    padding: 13px 48px;        /* ⬅️ border lamba kar diya */
+    letter-spacing: 2px;
+    background:linear-gradient(135deg,#ff5a7a,#ff2a2a);
+    box-shadow:0 0 25px rgba(255,90,122,.7);
+}
+
+.message-box{
+    margin:15px 0;
+    padding:22px;
+    border-radius:22px;
+    background:rgba(255,255,255,.35);
+    backdrop-filter:blur(14px);
+}
+
+/* GALLERY */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.85);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.modal-box{
+    width:95%;
+    max-width:520px;
+    max-height:90vh;
+    border-radius:30px;
+    background:linear-gradient(
+        120deg,
+        rgba(255,255,255,.45),
+        rgba(255,255,255,.15)
+    );
+    backdrop-filter: blur(24px);
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
+    overflow:hidden;
+    animation:popup .4s ease;
+}
+
+@keyframes popup{
+    from{transform:scale(.8);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 18px;
+    color:#fff;
+    background:linear-gradient(135deg,#ff5a7a,#ff0000);
+}
+
+.close-btn{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:none;
+    color:#fff;
+    background:rgba(255,255,255,.25);
+    cursor:pointer;
+    font-size:20px;
+    transition:.6s;
+}
+
+.close-btn.rotate{
+    transform:rotate(360deg) scale(1.15);
+}
+
+.gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    padding:15px;
+    overflow-y:auto;
+    max-height:70vh;
+}
+
+.gallery-grid img{
+    height:120px;
+    object-fit:cover;
+    margin:0;
+}
+
+/* FULL IMAGE VIEW */
+.full-image-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.95);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    flex-direction:column;
+}
+
+.full-image-modal img{
+    max-width:95%;
+    max-height:80%;
+    border-radius:20px;
+    transition:transform .3s;
+}
+
+/* DOWNLOAD BUTTON */
+.download-btn{
+    margin-top:15px;
+    background:linear-gradient(135deg,#ff5a7a,#ff0000);
+}
+
+/* 🆕 CLOSE BUTTON inside full-image-modal (extra option) */
+.full-close-btn {
+    margin-top: 12px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 40px;
+    background: rgba(255,255,255,.25);
+    backdrop-filter: blur(12px);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border: 1.5px solid rgba(255,255,255,.6);
+    box-shadow: 0 6px 18px rgba(0,0,0,.4);
+    cursor: pointer;
+    transition: .3s;
+}
+.full-close-btn:hover {
+    background: rgba(255,80,120,.9);
+    border-color: white;
+    transform: scale(1.05);
+}
+.full-close-btn:active {
+    transform: scale(0.96);
+}
+
+/* HEART ANIMATION */
+.heart{
+    position:fixed;
+    bottom:-20px;
+    font-size:20px;
+    animation:floatUp 4s linear forwards;
+}
+
+@keyframes floatUp{
+    to{
+        transform:translateY(-110vh);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<video id="video-bg" autoplay muted loop playsinline>
+    <source src="IMG_8469.MP4" type="video/mp4">
+</video>
+<div class="overlay"></div>
+
+<div class="container">
+<div class="layer active" id="layer1">
+    <h1>🎂 It's Your Birthday</h1>
+    <img src="photo-15.jpeg" class="main-img">
+    <p>You’re the most beautiful girl in the world 💖</p>
+    <button onclick="start()">Start Celebration 🎉</button>
+</div>
+
+<div class="layer" id="layer2">
+    <h1>🎵 Beautiful Memories</h1>
+    <img id="slideshow" src="photo-1.jpeg">
+    <!-- 👇 VIEW PHOTOS BUTTON HATAYA – ab sirf NEXT hai, border bhi lamba -->
+    <button onclick="next(3)">Next ❤️</button>
+</div>
+
+<div class="layer" id="layer3">
+    <h1>❤️ Happy Birthday Bachiya</h1>
+    <img src="photo-12.jpeg" class="main-img">
+    <p>You mean the world to me ✨</p>
+    <button onclick="next(4)">Read Message 💌</button>
+</div>
+
+<div class="layer" id="layer4">
+    <h1>⭐ Special Message</h1>
+    <div class="message-box">
+        ✨ May your days be soft and bright <br><br>
+        🌸 Your heart stay calm and strong <br><br>
+        🌷 Your dreams find courage 💖 <br><br>
+        🌸 and your smile never forget its way back ✨
+    </div>
+    <button onclick="openGallery()">Gallery 📷</button>
+    <button onclick="next(1)">Restart 🔄</button>
+</div>
+</div>
+
+<div class="modal" id="galleryModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>📸 your photo</span>
+            <button class="close-btn" onclick="closeGallery()">✕</button>
+        </div>
+        <div class="gallery-grid" id="gallery"></div>
+    </div>
+</div>
+
+<div class="full-image-modal" id="fullImageModal">
+    <img id="fullImage">
+    <button class="download-btn" onclick="downloadImage()">Download ⬇</button>
+    <!-- 🆕 EXTRA CLOSE BUTTON – gallery ke andar close ka option add kiya -->
+    <button class="full-close-btn" onclick="closeFullImage()">Close ✕</button>
+</div>
+
+<audio id="bg-music" preload="auto">
+<source src="PPY Birthday Song, Happy Birthday to You - Happy Birthday Song with Names.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const images=[
+"photo-23.jpeg", "photo-24.jpeg", "photo-1.jpeg",
+"photo-2.jpeg", "photo-3.jpeg", "photo-4.jpeg", 
+"photo-26.jpeg", "photo-22.jpeg", "photo-27.jpeg", 
+"photo-25.jpeg", "photo-5.jpeg", "photo-6.jpeg",
+"photo-7.jpeg", "photo-8.jpeg", "photo-9.jpeg", 
+"photo-10.jpeg", "photo-11.jpeg", "photo-12.jpeg",
+"photo-13.jpeg","photo-14.jpeg","photo-15.jpeg",
+"photo-16.jpeg", "photo-17.jpeg", "photo-18.jpeg",
+"photo-19.jpeg","photo-20.jpeg", "photo-21.jpeg",
+];
+
+let i=0,slide,currentIndex=0,scale=1,startX=0;
+
+function next(n){
+document.querySelectorAll('.layer').forEach(l=>l.classList.remove('active'));
+document.getElementById('layer'+n).classList.add('active');
+}
+
+function start(){
+next(2);
+slide=setInterval(()=>{
+i=(i+1)%images.length;
+document.getElementById('slideshow').src=images[i];
+},2200);
+createHearts();
+}
+
+function openGallery(){
+const g=document.getElementById("gallery");
+g.innerHTML="";
+images.forEach((src,index)=>{
+const img=document.createElement("img");
+img.src=src;
+img.onclick=()=>{
+currentIndex=index;
+showFullImage();
+};
+g.appendChild(img);
+});
+document.getElementById("galleryModal").style.display="flex";
+}
+
+function showFullImage(){
+scale=1;
+const full=document.getElementById("fullImage");
+full.style.transform="scale(1)";
+full.src=images[currentIndex];
+document.getElementById("fullImageModal").style.display="flex";
+}
+
+function closeGallery(){
+const btn=document.querySelector(".close-btn");
+btn.classList.add("rotate");
+setTimeout(()=>{
+document.getElementById("galleryModal").style.display="none";
+btn.classList.remove("rotate");
+},500);
+}
+
+// 🆕 FULL IMAGE CLOSE FUNCTION (extra close option for full-image view)
+function closeFullImage(){
+document.getElementById("fullImageModal").style.display="none";
+}
+
+function downloadImage(){
+const a=document.createElement("a");
+a.href=images[currentIndex];
+a.download="birthday-photo.jpg";
+a.click();
+}
+
+/* Swipe */
+document.getElementById("fullImageModal").addEventListener("touchstart",e=>{
+startX=e.touches[0].clientX;
+});
+document.getElementById("fullImageModal").addEventListener("touchend",e=>{
+let endX=e.changedTouches[0].clientX;
+if(endX-startX>50) currentIndex=(currentIndex-1+images.length)%images.length;
+if(startX-endX>50) currentIndex=(currentIndex+1)%images.length;
+showFullImage();
+});
+
+/* Zoom */
+document.getElementById("fullImage").addEventListener("wheel",e=>{
+e.preventDefault();
+scale+=e.deltaY*-0.001;
+scale=Math.min(Math.max(.5,scale),3);
+e.target.style.transform=`scale(${scale})`;
+});
+
+/* Hearts */
+function createHearts(){
+setInterval(()=>{
+const heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="❤️";
+heart.style.left=Math.random()*100+"%";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),4000);
+},400);
+}
+
+// ensure music plays after start click
+document.querySelector('button[onclick="start()"]').addEventListener('click',()=>{
+const music=document.getElementById("bg-music");
+music.currentTime=0;
+music.play();
+});
+</script>
+
+</body>
+</html>
